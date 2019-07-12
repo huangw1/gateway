@@ -20,7 +20,7 @@ type parser struct {
 
 func (p parser) Parse(filename string) (config.ServerConfig, error) {
 	p.viper = viper.New()
-	p.viper.AddConfigPath(filename)
+	p.viper.SetConfigFile(filename)
 	p.viper.AutomaticEnv()
 	var cfg config.ServerConfig
 	if err := p.viper.ReadInConfig(); err != nil {

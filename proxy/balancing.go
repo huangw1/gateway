@@ -7,18 +7,26 @@ package proxy
 
 import (
 	"context"
-	"github.com/huangw1/gateway/sd"
 	"github.com/huangw1/gateway/config"
-	"time"
+	"github.com/huangw1/gateway/sd"
 	"net/url"
+	"time"
 )
 
 func NewRoundRobinLoadBalancedMiddleware(remote *config.Backend) Middleware {
-	return newLoadBalancedMiddleware(sd.NewRoundRobinLB(sd.FixedSubscriber(remote.Host)))
+	return NewRoundRobinLoadBalancedMiddlewareWithSubscriber(sd.FixedSubscriber(remote.Host))
 }
 
 func NewRandomLoadBalancedMiddleware(remote *config.Backend) Middleware {
-	return newLoadBalancedMiddleware(sd.NewRandomLB(sd.FixedSubscriber(remote.Host), time.Now().UnixNano()))
+	return NewRandomLoadBalancedMiddlewareWithSubscriber(sd.FixedSubscriber(remote.Host))
+}
+
+func NewRoundRobinLoadBalancedMiddlewareWithSubscriber(subscriber sd.Subscriber) Middleware {
+	return newLoadBalancedMiddleware(sd.NewRoundRobinLB(subscriber))
+}
+
+func NewRandomLoadBalancedMiddlewareWithSubscriber(subscriber sd.Subscriber) Middleware {
+	return newLoadBalancedMiddleware(sd.NewRandomLB(subscriber, time.Now().UnixNano()))
 }
 
 func newLoadBalancedMiddleware(balancer sd.Balancer) Middleware {

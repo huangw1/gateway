@@ -6,14 +6,14 @@
 package proxy
 
 import (
-	"github.com/huangw1/gateway/config"
 	"context"
-	"time"
 	"errors"
+	"github.com/huangw1/gateway/config"
+	"time"
 )
 
 func NewConcurrentMiddleware(remote *config.Backend) Middleware {
-	serviceTimeout := time.Duration(75*remote.Timeout.Nanoseconds()/100) * time.Nanosecond
+	serviceTimeout := time.Duration(remote.Timeout.Nanoseconds()) * time.Millisecond
 	return func(next ...Proxy) Proxy {
 		if len(next) > 1 {
 			panic(ErrTooManyProxies)
@@ -62,7 +62,7 @@ func processConcurrentCall(ctx context.Context, request *Request, next Proxy, re
 	}
 	select {
 	case results <- res:
-	case <- ctx.Done():
+	case <-ctx.Done():
 		failed <- ctx.Err()
 	}
 	cancel()

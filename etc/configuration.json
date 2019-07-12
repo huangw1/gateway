@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "name": "gateway",
+  "port": 8080,
+  "timeout": 10000,
+  "cache_ttl": 3600,
+  "host": [
+    "https://jsonplaceholder.typicode.com",
+    "https://my-json-server.typicode.com",
+    "http://127.0.0.3:9000",
+    "http://127.0.0.4"
+  ],
+  "endpoints": [
+    {
+      "endpoint": "/api/posts/{id}",
+      "method": "GET",
+      "backend": [
+        {
+          "host": [
+            "https://jsonplaceholder.typicode.com"
+          ],
+          "group": "post",
+          "url_pattern": "/posts/{id}"
+        },
+        {
+          "host": [
+            "https://my-json-server.typicode.com"
+          ],
+          "group": "node",
+          "url_pattern": "/typicode/demo/posts/{id}"
+        }
+      ],
+      "concurrent_calls": 1,
+      "timeout": 10000,
+      "cache_ttl": 3600,
+      "querystring_params": [
+        "page",
+        "limit"
+      ]
+    },
+    {
+      "endpoint": "/foo/bar",
+      "method": "POST",
+      "backend": [
+        {
+          "host": [
+            "https://127.0.0.1:8081"
+          ],
+          "url_pattern": "/__debug/tupu"
+        }
+      ],
+      "concurrent_calls": 1,
+      "timeout": 10000,
+      "cache_ttl": 3600
+    },
+    {
+      "endpoint": "/github",
+      "method": "GET",
+      "backend": [
+        {
+          "host": [
+            "https://api.github.com"
+          ],
+          "url_pattern": "/",
+          "whitelist": [
+            "authorizations_url",
+            "code_search_url"
+          ]
+        }
+      ],
+      "concurrent_calls": 2,
+      "timeout": 10000,
+      "cache_ttl": 3600
+    },
+    {
+      "endpoint": "/combination/{id}/{supu}",
+      "method": "GET",
+      "backend": [
+        {
+          "group": "first_post",
+          "host": [
+            "https://jsonplaceholder.typicode.com"
+          ],
+          "url_pattern": "/posts/{id}?supu={supu}",
+          "blacklist": [
+            "userId"
+          ]
+        },
+        {
+          "host": [
+            "https://jsonplaceholder.typicode.com"
+          ],
+          "url_pattern": "/users/{id}",
+          "mapping": {
+            "email": "personal_email"
+          }
+        }
+      ],
+      "concurrent_calls": 3,
+      "timeout": 10000,
+      "querystring_params": [
+        "page",
+        "limit"
+      ]
+    }
+  ]
+}

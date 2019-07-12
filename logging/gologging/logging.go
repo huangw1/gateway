@@ -6,25 +6,28 @@
 package gologging
 
 import (
-	gologging "github.com/op/go-logging"
 	"github.com/huangw1/gateway/logging"
+	gologging "github.com/op/go-logging"
 	"io"
 )
 
 const module = "gateway"
 
-func NewLogger(level string, out io.Writer, prefix string) logging.Logger {
+func NewLogger(level string, out io.Writer, prefix string) (logging.Logger, error) {
 	log := gologging.MustGetLogger(module)
 	logBackend := gologging.NewLogBackend(out, prefix, 0)
 	format := gologging.MustStringFormatter(
-		` %{time:2006/01/02 - 15:04:05.000} %{color}▶ %{level:.6s}%{color:reset} %{message}`,
+		` %{time:2006/01/02 - 15:04:05.000} %{color}▶ %{level:.4s}%{color:reset} %{message}`,
 	)
 	backendFormatter := gologging.NewBackendFormatter(logBackend, format)
 	backendLeveled := gologging.AddModuleLevel(backendFormatter)
-	logLevel, _ := gologging.LogLevel(level)
+	logLevel, err := gologging.LogLevel(level)
+	if err != nil {
+		return nil, err
+	}
 	backendLeveled.SetLevel(logLevel, module)
 	gologging.SetBackend(backendLeveled)
-	return Logger{log}
+	return Logger{log}, nil
 }
 
 type Logger struct {
@@ -54,4 +57,3 @@ func (l Logger) Critical(v ...interface{}) {
 func (l Logger) Fatal(v ...interface{}) {
 	l.Logger.Fatal(v...)
 }
-

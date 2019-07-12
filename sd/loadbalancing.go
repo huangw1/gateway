@@ -7,8 +7,8 @@ package sd
 
 import (
 	"errors"
-	"sync/atomic"
 	"math/rand"
+	"sync/atomic"
 )
 
 var ErrNoHosts = errors.New("no hosts available")

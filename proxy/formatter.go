@@ -77,7 +77,7 @@ func newWhitelistingFilter(whitelist []string) propertyFilter {
 	wl := make(map[string]map[string]interface{}, len(whitelist))
 	for _, k := range whitelist {
 		keys := strings.Split(k, ".")
-		temp := make(map[string]interface{}, len(keys) - 1)
+		temp := make(map[string]interface{}, len(keys)-1)
 		if len(keys) > 1 {
 			if _, ok := wl[keys[0]]; ok {
 				for _, key := range keys[1:] {

@@ -18,17 +18,17 @@ func NewLoggingMiddleware(logger logging.Logger, name string) Middleware {
 		}
 		return func(ctx context.Context, request *Request) (*Response, error) {
 			begin := time.Now()
-			logger.Info(name, "calling to backend")
-			logger.Debug("request", request)
+			logger.Info(name, "Calling to backend")
+			logger.Info("Request", request)
 
 			res, err := next[0](ctx, request)
 
-			logger.Info(name, "call to backend took", time.Now().Sub(begin).String())
+			logger.Info(name, "Call to backend took", time.Now().Sub(begin).String())
 			if err != nil {
-				logger.Warning(name, "call to backend failed:", err.Error())
+				logger.Warning(name, "Call to backend failed:", err.Error())
 			}
 			if res == nil {
-				logger.Warning(name, "call to backend returned a null response")
+				logger.Warning(name, "Call to backend returned a null response")
 			}
 			return res, err
 		}

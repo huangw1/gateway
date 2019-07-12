@@ -27,7 +27,7 @@ type Proxy func(ctx context.Context, request *Request) (*Response, error)
 
 type BackendFactory func(remote *config.Backend) Proxy
 
-type Middleware func(next ... Proxy) Proxy
+type Middleware func(next ...Proxy) Proxy
 
 func EmptyMiddleware(next ...Proxy) Proxy {
 	if len(next) > 1 {

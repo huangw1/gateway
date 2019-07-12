@@ -6,9 +6,9 @@
 package proxy
 
 import (
-	"net/url"
 	"io"
-	"bytes"
+	"net/url"
+	"strings"
 )
 
 type Request struct {
@@ -26,14 +26,10 @@ func (r *Request) GeneratePath(URLPattern string) {
 		r.Path = URLPattern
 		return
 	}
-	buff := []byte(URLPattern)
 	for k, v := range r.Params {
-		key := make([]byte, 0)
-		key = append(key, "{{."...)
-		key = append(key, k...)
-		key = append(key, "}}"...)
-		bytes.Replace(buff, key, []byte(v), -1)
+		URLPattern = strings.Replace(URLPattern, "/{{."+k+"}}", "/"+v, -1)
 	}
+	r.Path = URLPattern
 }
 
 func (r *Request) Clone() Request {

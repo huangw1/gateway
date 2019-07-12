@@ -6,11 +6,11 @@
 package proxy
 
 import (
-	"errors"
 	"context"
-	"net/http"
+	"errors"
 	"github.com/huangw1/gateway/config"
 	"github.com/huangw1/gateway/encoding"
+	"net/http"
 )
 
 var ErrInvalidStatusCode = errors.New("invalid status code")
@@ -21,7 +21,7 @@ func NewHTTPClient(_ context.Context) *http.Client {
 	return http.DefaultClient
 }
 
-func httpProxy(remote *config.Backend) Proxy {
+func DefaultHTTPProxy(remote *config.Backend) Proxy {
 	return NewHTTPProxy(remote, NewHTTPClient, remote.Decoder)
 }
 
@@ -50,7 +50,7 @@ func NewHTTPProxy(remote *config.Backend, clientFactory HTTPClientFactory, decod
 		res, err := clientFactory(ctx).Do(req.WithContext(ctx))
 		defer res.Body.Close()
 		select {
-		case <- ctx.Done():
+		case <-ctx.Done():
 			return nil, ctx.Err()
 		default:
 		}
@@ -65,7 +65,7 @@ func NewHTTPProxy(remote *config.Backend, clientFactory HTTPClientFactory, decod
 		if err != nil {
 			return nil, err
 		}
-		r := formatter.Format(Response{Data:data, IsComplete: true})
+		r := formatter.Format(Response{Data: data, IsComplete: true})
 		return &r, nil
 	}
 }
